@@ -2,6 +2,8 @@
  * sysclock.h - configuration routines for KL25Z system clock
  * 
  * Author Howdy Pierce, howdy.pierce@colorado.edu
+ * Reused by Suhas Srinivasa Reddy
+ *
  */
 
 #ifndef _SYSCLOCK_H_

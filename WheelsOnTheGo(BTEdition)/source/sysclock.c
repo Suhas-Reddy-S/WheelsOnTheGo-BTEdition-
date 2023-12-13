@@ -6,7 +6,8 @@
  * See section 24 of the KL25Z Reference Manual to understand this code
  *
  * Inspired by https://learningmicro.wordpress.com/configuring-device-clock-and-using-systick-system-tick-timer-module-to-generate-software-timings/
-
+ * Reused by Suhas Srinivasa Reddy
+ *
  */
 
 #include "MKL25Z4.h"
