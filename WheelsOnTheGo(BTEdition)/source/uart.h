@@ -4,6 +4,17 @@
 #include <stdint.h>
 
 /**
+ * @file    uart.h
+ * @brief   UART (Universal Asynchronous Receiver-Transmitter) module functions for serial communication.
+ *
+ * This header file contains functions to initialize UART0 for serial communication,
+ * transmit null-terminated strings, transmit individual characters, and receive bytes.
+ *
+ * @author  [Your Name]
+ * @date    [Current Date]
+ */
+
+/**
  * @brief Initialize UART0 for serial communication.
  *
  * This function initializes the UART0 module for serial communication.
@@ -23,16 +34,21 @@ void Init_UART0(void);
 void UART0_Transmit_String(const char *str);
 
 /**
- * @brief Transmit an array of bytes over UART0.
+ * @brief Transmit a single character over UART0.
  *
- * This function transmits an array of bytes over UART0.
+ * This function transmits a single character over UART0.
  *
- * @param data The array of bytes to be transmitted.
+ * @param val The character to be transmitted.
  */
-void UART0_Transmit(uint8_t *data);
-
 void UART0_Transmit_Char(char val);
 
+/**
+ * @brief Receive a byte from UART0.
+ *
+ * This function receives a byte from UART0.
+ *
+ * @return The received byte.
+ */
 char UART0_Receive_Byte(void);
 
 #endif // UART_H

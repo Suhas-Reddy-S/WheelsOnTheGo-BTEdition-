@@ -97,6 +97,7 @@ void Init_UART0() {
 
 }
 
+// refer uart.h for function brief
 void UART0_Transmit_String(const char *str) {
 	while (*str != '\0') {
 		UART0_Transmit_Char(*str);
@@ -104,11 +105,13 @@ void UART0_Transmit_String(const char *str) {
 	}
 }
 
+// refer uart.h for function brief
 void UART0_Transmit_Char(char val) {
 	while (!(UART0->S1 & UART_S1_TDRE_MASK));
 	UART0->D = val;
 }
 
+// refer uart.h for function brief
 char UART0_Receive_Byte(void) {
 	while (!(UART0->S1 & UART_S1_RDRF_MASK));
 	return UART0->D;
