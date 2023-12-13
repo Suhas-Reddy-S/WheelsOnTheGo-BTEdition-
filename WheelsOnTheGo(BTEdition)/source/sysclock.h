@@ -13,6 +13,6 @@
  * Initializes the system clock. You should call this first in your
  * program.
  */
-void sysclock_init();
+void Init_Sysclock();
 
 #endif  // _SYSCLOCK_H_

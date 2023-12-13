@@ -14,7 +14,7 @@
 
 
 void
-sysclock_init()
+Init_Sysclock()
 {
   // Corresponds to FEI mode as shown in sec 24.4.1 
 

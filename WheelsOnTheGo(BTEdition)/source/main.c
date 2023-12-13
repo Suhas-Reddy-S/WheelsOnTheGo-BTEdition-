@@ -1,32 +1,12 @@
-/*
- * Copyright (c) 2015, Freescale Semiconductor, Inc.
- * Copyright 2016-2017 NXP
+/*******************************************************************************
+ * Copyright (C) 2023 by Suhas Srinivasa Reddy
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- *
- * o Redistributions of source code must retain the above copyright notice, this list
- *   of conditions and the following disclaimer.
- *
- * o Redistributions in binary form must reproduce the above copyright notice, this
- *   list of conditions and the following disclaimer in the documentation and/or
- *   other materials provided with the distribution.
- *
- * o Neither the name of the copyright holder nor the names of its
- *   contributors may be used to endorse or promote products derived from this
- *   software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+ * Redistribution, modification, or use of this software in source or binary
+ * forms is permitted as long as the files maintain this copyright. Users are
+ * permitted to modify this and use it to learn about the field of embedded
+ * software. Suhas Srinivasa Reddy and the University of Colorado are not liable
+ * for any misuse of this material.
+ ******************************************************************************/
 
 /* FreeRTOS kernel includes. */
 #include "FreeRTOS.h"
@@ -35,29 +15,35 @@
 #include "timers.h"
 #include "semphr.h"
 
-/* Freescale includes. */
+/* Freescale and custom includes includes. */
 #include "tpm.h"
 #include "sysclock.h"
 #include "uart.h"
 #include "MKL25Z4.h"
 #include "stdio.h"
 #include "motor_control.h"
+#include "led.h"
 #include "stdbool.h"
+#include "task.h"
 
 #include "pin_mux.h"
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
 
-/* Task priorities. */
-#define hello_task_PRIORITY (configMAX_PRIORITIES - 1)
+// Task priorities.
+#define task_PRIORITY (configMAX_PRIORITIES - 1)
+// Stack size.
+#define stack_Size (512)
+// Delay for turning actions (in nanoseconds)
+#define DELAY      (50)
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
 static void task_poll_BT(void *pvParameter);
-static void task_state_machine(void *pvParameter);
+static void task_motor_control(void *pvParameter);
 
-TaskHandle_t task_motor_control;
+TaskHandle_t motor_control_handle;
 SemaphoreHandle_t xMutex; /* Handle to access mutex */
 QueueHandle_t xQueue_sample;
 /*******************************************************************************
@@ -67,11 +53,17 @@ QueueHandle_t xQueue_sample;
  * @brief Application entry point.
  */
 
-char BT_input;
+char BT_input;  // Global variable to acquire and use input from BT module
+
 int main(void) {
-	sysclock_init();
+	// Initialize system components
+	Init_Sysclock();
 	Init_UART0();
+	Init_Motors();
+	Init_LEDs();
 	Init_TPM();
+
+	// Create synchronization primitives
 	xMutex = xSemaphoreCreateMutex();
 	xQueue_sample = xQueueCreate(1, sizeof(uint8_t));
 
@@ -79,39 +71,70 @@ int main(void) {
 	UART0_Transmit_String("\033[2J");
 	// Move the cursor to the top-left corner
 	UART0_Transmit_String("\033[H");
-	UART0_Transmit_String("Initiating Wheels On The Go (BT Edition).....");
+	UART0_Transmit_String("Initialized Wheels On The Go (BT Edition).....\n\r");
 
+	// Set initial RGB color and start motors
 	Set_RGB(0x888888);
-	Start_Motor(0xff, 0xff);
+	Start_Motors(MEDIUM_SPEED, MEDIUM_SPEED);
 
-	xTaskCreate(task_poll_BT, "poll_BT", configMINIMAL_STACK_SIZE + 160,
-	NULL, hello_task_PRIORITY, NULL);
-	xTaskCreate(task_state_machine, "poll_BT", configMINIMAL_STACK_SIZE + 160,
-	NULL, hello_task_PRIORITY, &task_motor_control);
+	// Create tasks and start FreeRTOS scheduler
+	xTaskCreate(task_poll_BT, "poll_BT", stack_Size,
+	NULL, task_PRIORITY, NULL);
+	xTaskCreate(task_motor_control, "poll_BT", stack_Size,
+	NULL, task_PRIORITY, &motor_control_handle);
 	vTaskStartScheduler();
 
+	// The scheduler should not return, but in case of failure, return 0.
 	while (1)
 		;
 	return 0;
 }
 
+/**
+ * @brief Task to poll Bluetooth input.
+ *
+ * This task continuously polls for Bluetooth input and updates the global variable
+ * `BT_input`. It also triggers the motor control task (`motor_control_handle`) to
+ * process the received input.
+ *
+ * @param pvParameter Task parameters (unused in this case).
+ */
 static void task_poll_BT(void *pvParameter) {
 	while (1) {
+		// Take mutex to safely access shared resources
 		xSemaphoreTake(xMutex, portMAX_DELAY);
+		// Receive Bluetooth input
 		BT_input = UART0_Receive_Byte();
+		// Release the mutex
 		xSemaphoreGive(xMutex);
-		vTaskResume(task_motor_control);
-		vTaskDelay(50 / portTICK_PERIOD_MS);
+		// Resume the motor control task to process the received input
+		vTaskResume(motor_control_handle);
+		// Introduce a delay to avoid excessive polling
+		vTaskDelay(DELAY / portTICK_PERIOD_MS);
 	}
 }
 
-static void task_state_machine(void *pvParameter) {
+/**
+ * @brief Task to manage motor control based on Bluetooth input.
+ *
+ * This task continuously waits for Bluetooth input (`BT_input`) and calls the
+ * `Motor_Control` function to perform actions based on the received commands.
+ * It then suspends itself until new input is received.
+ *
+ * @param pvParameter Task parameters (unused in this case).
+ */
+static void task_motor_control(void *pvParameter) {
 	while (1) {
+		// Take mutex to safely access shared resources
 		xSemaphoreTake(xMutex, portMAX_DELAY);
+		// Check if there is a valid Bluetooth input
 		if (BT_input != '\0') {
-			state_machine(BT_input);
+			// Perform motor control based on the received command
+			Motor_Control(BT_input);
 		}
+		// Release the mutex
 		xSemaphoreGive(xMutex);
+		// Suspend the task until new input is received
 		vTaskSuspend(NULL);
 	}
 }
