@@ -15,18 +15,21 @@
 #include "timers.h"
 #include "semphr.h"
 
-/* Freescale and custom includes includes. */
+/* Freescale includes. */
+#include "MKL25Z4.h"
+#include "pin_mux.h"
+
+/* Standard C includes. */
+#include "stdio.h"
+#include "stdbool.h"
+
+/* Custom driver includes. */
 #include "tpm.h"
 #include "sysclock.h"
 #include "uart.h"
-#include "MKL25Z4.h"
-#include "stdio.h"
 #include "motor_control.h"
 #include "led.h"
-#include "stdbool.h"
-#include "task.h"
 
-#include "pin_mux.h"
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
