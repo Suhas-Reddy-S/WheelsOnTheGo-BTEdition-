@@ -38,7 +38,7 @@
 #define task_PRIORITY (configMAX_PRIORITIES - 1)
 // Stack size.
 #define stack_Size (512)
-// Delay for turning actions (in nanoseconds)
+// Delay for turning actions (in milliseconds)
 #define DELAY      (50)
 // Startup light
 #define STARTUP_LIGHT (0x888888)

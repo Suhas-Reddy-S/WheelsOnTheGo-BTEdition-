@@ -70,7 +70,7 @@
 #define CH0             (0)
 #define CH5             (5)
 
-// Delay for turning actions (in nanoseconds)
+// Delay for turning actions (in milliseconds)
 #define DELAY           (500)
 
 
