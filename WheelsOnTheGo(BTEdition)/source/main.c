@@ -29,7 +29,6 @@
 #include "uart.h"
 #include "motor_control.h"
 #include "led.h"
-#include "test_uart0.h"
 
 /*******************************************************************************
  * Definitions
@@ -65,7 +64,6 @@ int main(void) {
 	// Initialize system components
 	Init_Sysclock();
 	Init_UART0();
-	run_UART0_tests();
 	Init_Motors();
 	Init_LEDs();
 	Init_TPM();
