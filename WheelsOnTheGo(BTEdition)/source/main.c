@@ -37,6 +37,8 @@
 #define stack_Size (512)
 // Delay for turning actions (in nanoseconds)
 #define DELAY      (50)
+// Startup light
+#define STARTUP_LIGHT (0x888888)
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
@@ -74,7 +76,7 @@ int main(void) {
 	UART0_Transmit_String("Initialized Wheels On The Go (BT Edition).....\n\r");
 
 	// Set initial RGB color and start motors
-	Set_RGB(0x888888);
+	Set_RGB(STARTUP_LIGHT);
 	Start_Motors(MEDIUM_SPEED, MEDIUM_SPEED);
 
 	// Create tasks and start FreeRTOS scheduler
