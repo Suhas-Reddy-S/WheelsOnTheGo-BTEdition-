@@ -8,25 +8,30 @@ Code for Final Project of PES, Fall 2023, ECEN-5813
 - [Components Used](#components-used)
 - [PIN Connection](#pin-connection)
 - [Instructions To Drive](#instructions-to-drive)
-- [Report](#report)
 - [Challenges](#challenges)
 - [Project Videos](#project-videos)
 - [References](#references)
-- [Acknowledgements](#acknowledgements)
-
 
 ## Project Functionality 
 
 The core objective of this project is to engineer a Bluetooth-controlled car, utilizing the KL25Z4 microcontroller,
 a Bluetooth module from sprakfun, FreeRTOS for multitasking, and a state machine for precise motor control. The 
 project will demonstrate the following functionality:
-- Bluetooth Control: The car will be remotely controlled via Arduino Bluetooth Controller app. The app will 
+- **Bluetooth Control**: The car will be remotely controlled via Arduino Bluetooth Controller app. The app will 
 provide UI to direct its movements.
-- State Machine: A meticulously designed state machine will govern the car's behavior, facilitating seamless
-transitions between operational states. States may include forward motion, backward motion, turning, and
+- **State Machine:** A meticulously designed state machine will govern the car's behavior, facilitating seamless
+transitions between operational states. States include forward motion, backward motion, turning, and
 stopping.
-- Concurrency: FreeRTOS will be harnessed to efficiently manage concurrent tasks, including Bluetooth
+- **Concurrency**: FreeRTOS was used to efficiently manage concurrent tasks, including Bluetooth
 communication, motor control, and state transitions.
+
+## State Machine
+
+![WheelsOnTheGo](https://github.com/Suhas-Reddy-S/WheelsOnTheGo-BTEdition-/assets/143859218/af01af4b-7f63-4cfc-bcbc-a72515aca98f)
+
+**Note**
+- Colors indicate color of the LEDs.
+- Directions indicate motion status of the car.
 
 ## Components Used
 - KL25Z4 MCU from NXP
@@ -59,10 +64,6 @@ communication, motor control, and state transitions.
 - Right arrow: Turns the car towards right about 90 degrees and stops it, turns the on-board LED cyan.
 - Left arrow: Turns the car towards left about 90 degrees and stops it, turns the on-board LED yellow.
 
-## Report
-
-A brief report of the project can be found [here]().
-
 ## Challenges
 
 The initial project proposal involved integrating a Wi-Fi module. Despite dedicating substantial time to 
@@ -71,6 +72,7 @@ firmware and hardware of the Wi-Fi module were corrupted.
 Later, I switched to a bluetooth module from sparkfun and interfaced it to KL25Z4 over UART.
 
 ## Project Videos
+
 
 ## References 
 
