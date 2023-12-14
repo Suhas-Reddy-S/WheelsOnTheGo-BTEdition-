@@ -76,5 +76,5 @@ Later, I switched to a bluetooth module from sparkfun and interfaced it to KL25Z
 
 [Alexander G. Dean for initialization routines](https://github.com/alexander-g-dean/ESF/tree/master/NXP/Code)  
 [Music Reactive LEDS by Ritika R. for FreeRTOS implementation](https://github.com/ritikar97/Music_Reactive_LEDs/tree/main)  
-[Spark fun for RN-41 AT command set for the bluetooth module](https://cdn.sparkfun.com/datasheets/Wireless/Bluetooth/bluetooth_cr_UG-v1.0r.pdf?_gl=1*lfkcle*_ga*MjQ3NzQwODA5LjE3MDA3ODY2NzQ.*_ga_T369JS7J9N*MTcwMjUxMjg0OS4xNS4wLjE3MDI1MTI4NDkuNjAuMC4w)
-[Spark fun for RN-41 DataSheet](http://cdn.sparkfun.com/datasheets/Wireless/Bluetooth/Bluetooth-RN-41-DS.pdf?_gl=1*1eytsyb*_ga*MjQ3NzQwODA5LjE3MDA3ODY2NzQ.*_ga_T369JS7J9N*MTcwMjUxMjg0OS4xNS4xLjE3MDI1MTI5OTAuNTUuMC4w)
+[Sparkfun for RN-41 AT command set](https://cdn.sparkfun.com/datasheets/Wireless/Bluetooth/bluetooth_cr_UG-v1.0r.pdf?_gl=1*lfkcle*_ga*MjQ3NzQwODA5LjE3MDA3ODY2NzQ.*_ga_T369JS7J9N*MTcwMjUxMjg0OS4xNS4wLjE3MDI1MTI4NDkuNjAuMC4w)
+[Sparkfun for RN-41 DataSheet](http://cdn.sparkfun.com/datasheets/Wireless/Bluetooth/Bluetooth-RN-41-DS.pdf?_gl=1*1eytsyb*_ga*MjQ3NzQwODA5LjE3MDA3ODY2NzQ.*_ga_T369JS7J9N*MTcwMjUxMjg0OS4xNS4xLjE3MDI1MTI5OTAuNTUuMC4w)
